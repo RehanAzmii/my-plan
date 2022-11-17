@@ -1,7 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { postRequest } from "../component/service/API_service";
+import { setCookie } from "./liberary/Cookies (1)";
 
 const Login = () => {
+  const [data, setData] = useState({
+    domain: "admin.checkmyplan.in",
+    password: "",
+    userID: "",
+  });
+  const inputHandler = (e) => {
+    const { value, name } = e.target;
+    setData((preValue) => {
+      return {
+        ...preValue,
+        [name]: value,
+      };
+    });
+  };
+  console.log(data);
+
+  // const userLogin = async (e) => {
+  //   e.preventDefault();
+  //   const res = await axios({
+  //     method: "POST",
+  //     data: data,
+  //     url: "/ApiUserAfterLogin/APIUserLogin",
+  //     withCredentials: true,
+  //     headers: { "Content-type": "application/json" },
+  //   });
+  //   console.log(res);
+  // };
+  const userLogin = (e) => {
+    e.preventDefault();
+    postRequest();
+  };
   return (
     <div>
       <div className="accountbg"></div>
@@ -19,11 +53,12 @@ const Login = () => {
                   <div className="col-12">
                     <input
                       className="form-control"
-                      type="email"
+                      type="userID"
                       required=""
-                      placeholder="Email Address"
-                      name="email"
-                      //   onChange={inputHandler}
+                      placeholder="userID"
+                      name="userID"
+                      onChange={inputHandler}
+                      value={data.email}
                     />
                   </div>
                 </div>
@@ -35,7 +70,8 @@ const Login = () => {
                       required=""
                       placeholder="Password"
                       name="password"
-                      //   onChange={inputHandler}
+                      onChange={inputHandler}
+                      value={data.password}
                     />
                   </div>
                 </div>
@@ -61,7 +97,7 @@ const Login = () => {
                     <button
                       className="btn btn-danger btn-block waves-effect waves-light"
                       type="submit"
-                      //   onClick={getAuthenticate}
+                      onClick={userLogin}
                     >
                       Login
                     </button>
