@@ -1,5 +1,5 @@
 import React from "react";
-import Body from "./Body";
+// import Body from "./Body";
 import Footer from "./Footer";
 import LeftBar from "./LeftBar";
 import RightBar from "./RightBar";
@@ -43,7 +43,7 @@ const Navbar = () => {
           </div>
         </div>
       </header>
-      <Body />
+      {/* <Body /> */}
       <Footer />
     </div>
   );

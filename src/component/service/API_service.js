@@ -20,7 +20,7 @@ function getHeaders() {
 
 function postHeaders() {
   return {
-    "content-type": "application/json",
+    "Content-Type": "application/json",
     authorization: `Bearer ${getStoredAuthToken()}`,
   };
 }
@@ -37,7 +37,7 @@ export const getRequest = (endpoint, data = null) =>
       throw err;
     });
 
-export const postRequest = async (endpoint, data = null) => {
+export const postRequest = async (endpoint, data = {}) => {
   return await axios
     .post(baseURL + endpoint, data, {
       headers: postHeaders(),
@@ -45,7 +45,7 @@ export const postRequest = async (endpoint, data = null) => {
     })
     .then((res) => res.data)
     .catch((err) => {
-      console.log(`Error in post request to entpoint ${endpoint}`, err);
+      console.log(`Error in post request to endpoint ${endpoint}`, err);
       throw err;
     });
 };

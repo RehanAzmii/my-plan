@@ -1,40 +1,46 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { postRequest } from "../component/service/API_service";
 import { setCookie } from "./liberary/Cookies (1)";
+import { DATACONSTANT } from "./constant/data.constant";
+
+import { toast } from "react-toastify";
 
 const Login = () => {
-  const [data, setData] = useState({
-    domain: "admin.checkmyplan.in",
-    password: "",
-    userID: "",
-  });
-  const inputHandler = (e) => {
-    const { value, name } = e.target;
-    setData((preValue) => {
-      return {
-        ...preValue,
-        [name]: value,
-      };
-    });
-  };
-  console.log(data);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState();
 
-  // const userLogin = async (e) => {
-  //   e.preventDefault();
-  //   const res = await axios({
-  //     method: "POST",
-  //     data: data,
-  //     url: "/ApiUserAfterLogin/APIUserLogin",
-  //     withCredentials: true,
-  //     headers: { "Content-type": "application/json" },
-  //   });
-  //   console.log(res);
-  // };
-  const userLogin = (e) => {
+  async function getSession(e) {
     e.preventDefault();
-    postRequest();
+    toast.success("Hi ");
+    try {
+      var postResponse = await postRequest(DATACONSTANT.LOGIN_URL, {
+        domain: DATACONSTANT.DOMAIN_NAME,
+        userID: formData.email,
+        Password: formData.password,
+      });
+      console.log();
+      if (postResponse.statuscode == 1) {
+        setCookie(
+          DATACONSTANT.SETCOOKIE,
+          JSON.stringify(postResponse.data),
+          30
+        );
+        return navigate("/");
+      }
+      console.log(postResponse);
+      toast.success(postResponse.msg);
+    } catch (error) {
+      return {
+        statuscode: -1,
+        msg: error.code,
+      };
+    }
+  }
+
+  const inputHandler = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   return (
     <div>
@@ -53,12 +59,12 @@ const Login = () => {
                   <div className="col-12">
                     <input
                       className="form-control"
-                      type="userID"
+                      type="text"
                       required=""
                       placeholder="userID"
-                      name="userID"
+                      name="email"
                       onChange={inputHandler}
-                      value={data.email}
+                      // value={data.email}
                     />
                   </div>
                 </div>
@@ -71,7 +77,7 @@ const Login = () => {
                       placeholder="Password"
                       name="password"
                       onChange={inputHandler}
-                      value={data.password}
+                      // value={data.password}
                     />
                   </div>
                 </div>
@@ -97,7 +103,7 @@ const Login = () => {
                     <button
                       className="btn btn-danger btn-block waves-effect waves-light"
                       type="submit"
-                      onClick={userLogin}
+                      onClick={getSession}
                     >
                       Login
                     </button>

@@ -4,7 +4,8 @@ export const DATACONSTANT = {
 
   LOGIN_URL: "/ApiUserAfterLogin/APIUserLogin",
 
-  BASE_URL: "http://admin.checkmyplan.in",
+  // BASE_URL: "http://admin.checkmyplan.in",
+  BASE_URL: "",
 
   Version: "1.0",
 
