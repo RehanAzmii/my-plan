@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 const ForgotPassword = () => {
+  const [data, setData] = useState({
+    email: "",
+  });
+  const inputHandler = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
   return (
     <div>
       <div className="accountbg"></div>
@@ -15,7 +22,7 @@ const ForgotPassword = () => {
             <div className="p-3">
               <form
                 className="form-horizontal"
-                action="https://mannatthemes.com/zoogler/horizontal/index.html"
+                // action="https://mannatthemes.com/zoogler/horizontal/index.html"
               >
                 <div className="alert alert-success alert-dismissible">
                   <button
@@ -33,8 +40,9 @@ const ForgotPassword = () => {
                     <input
                       className="form-control"
                       type="email"
-                      required=""
+                      required
                       placeholder="Email"
+                      onChange={inputHandler}
                     />
                   </div>
                 </div>

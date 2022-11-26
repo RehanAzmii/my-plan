@@ -1,44 +1,54 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { postRequest } from "../component/service/API_service";
-import { setCookie } from "./liberary/Cookies (1)";
-import { DATACONSTANT } from "./constant/data.constant";
+import { postRequest } from "../service/API_service";
+import { setCookie } from "../liberary/Cookies (1)";
+import { DATACONSTANT } from "../constant/data.constant";
 
 import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState();
+  const [check, setCheck] = useState(false);
 
   async function getSession(e) {
     e.preventDefault();
     toast.success("Hi ");
-    try {
-      var postResponse = await postRequest(DATACONSTANT.LOGIN_URL, {
-        domain: DATACONSTANT.DOMAIN_NAME,
-        userID: formData.email,
-        Password: formData.password,
-      });
-      console.log();
-      if (postResponse.statuscode == 1) {
-        setCookie(
-          DATACONSTANT.SETCOOKIE,
-          JSON.stringify(postResponse.data),
-          30
-        );
-        return navigate("/");
+
+    if (check === true) {
+      try {
+        var postResponse = await postRequest(DATACONSTANT.LOGIN_URL, {
+          domain: DATACONSTANT.DOMAIN_NAME,
+          userID: formData.email,
+          Password: formData.password,
+        });
+
+        if (postResponse.statuscode == 1) {
+          setCookie(
+            DATACONSTANT.SETCOOKIE,
+            JSON.stringify(postResponse.data),
+            30
+          );
+          return navigate("/");
+        }
+        console.log(postResponse);
+        alert(postResponse.msg);
+        toast.success(postResponse.msg);
+      } catch (error) {
+        alert(error.code);
+        return {
+          statuscode: -1,
+          msg: error.code,
+        };
       }
-      console.log(postResponse);
-      toast.success(postResponse.msg);
-    } catch (error) {
-      return {
-        statuscode: -1,
-        msg: error.code,
-      };
+    } else {
+      alert("check box checked");
     }
   }
-
+  const inputCheck = () => {
+    setCheck(!check);
+  };
   const inputHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -88,6 +98,8 @@ const Login = () => {
                         type="checkbox"
                         className="custom-control-input"
                         id="customCheck1"
+                        onClick={inputCheck}
+                        value={check}
                       />{" "}
                       <label
                         className="custom-control-label"

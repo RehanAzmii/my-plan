@@ -1,6 +1,6 @@
 import React from "react";
-// import Body from "./Body";
-import Footer from "./Footer";
+import { NavLink } from "react-router-dom";
+
 import LeftBar from "./LeftBar";
 import RightBar from "./RightBar";
 // import { NavLink } from "react-router-dom";
@@ -38,13 +38,19 @@ const Navbar = () => {
                     Plan Type
                   </a>
                 </li>
+                <li className="has-submenu">
+                  <NavLink to="/ipadd" style={{ marginLeft: "-10px" }}>
+                    <i className="dripicons-device-desktop cus-das"></i>
+                    IP Address
+                  </NavLink>
+                </li>
               </ul>
             </div>
           </div>
         </div>
       </header>
       {/* <Body /> */}
-      <Footer />
+      //{" "}
     </div>
   );
 };
