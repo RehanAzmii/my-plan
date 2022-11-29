@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { postRequest } from "../service/API_service";
 import { setCookie } from "../liberary/Cookies (1)";
 import { DATACONSTANT } from "../constant/data.constant";
-
+import { validEmail, validNumber, validPincode, validName } from "./regex";
 const Register = () => {
   // const initialValues = {
   //   Name: "",
@@ -15,39 +15,59 @@ const Register = () => {
   // };
 
   const navigate = useNavigate();
-  const [formdata, setFormData] = useState();
+  const [formdata, setFormData] = useState({
+    Name: "",
+    mobileNumber: "",
+    email: "",
+    address: "",
+    pincode: "",
+  });
   const [check, setCheck] = useState(false);
-  // const [formError, setFormError] = useState({});
-  // const [isSubmit, setIsSubmit] = useState(false);
-  // useEffect(() => {}, [formError]);
+  const [error, setError] = useState([]);
 
   const register = async (e) => {
-    // setFormError(validate(formdata));
-    // setIsSubmit(true);
+    e.preventDefault();
     if (check === true) {
       try {
-        e.preventDefault();
-        let postResponse = await postRequest(DATACONSTANT.REGISTER_URL, {
-          domain: DATACONSTANT.DOMAIN_NAME,
-          usercreate: {
-            generateotp: "",
-            otp: "",
-            name: formdata.Name,
-            mobileNo: formdata.mobileNumber,
-            emailid: formdata.email,
-            address: formdata.address,
-            pincode: formdata.pincode,
-          },
-        });
-        if (postResponse.statuscode === 1) {
-          setCookie(
-            DATACONSTANT.SETCOOKIE,
-            JSON.stringify(postResponse.data),
-            30
-          );
-          return navigate("/");
+        console.log(error);
+        let errors = [];
+        if (!validEmail.test(formdata.email)) {
+          errors.push("email");
         }
-        console.log(postResponse);
+        if (!validName.test(formdata.name?.trim())) {
+          errors.push("name");
+        }
+        if (!validNumber.test(formdata.mobileNumber)) {
+          errors.push("mobileNumber");
+        }
+        if (!validPincode.test(formdata.pincode)) {
+          errors.push("pincode");
+        }
+        setError(errors);
+        if (error?.length == 0) {
+          console.log("123");
+          let postResponse = await postRequest(DATACONSTANT.REGISTER_URL, {
+            domain: DATACONSTANT.DOMAIN_NAME,
+            usercreate: {
+              generateotp: "",
+              otp: "",
+              name: formdata.Name,
+              mobileNo: formdata.mobileNumber,
+              emailid: formdata.email,
+              address: formdata.address,
+              pincode: formdata.pincode,
+            },
+          });
+          if (postResponse.statuscode === 1) {
+            setCookie(
+              DATACONSTANT.SETCOOKIE,
+              JSON.stringify(postResponse.data),
+              30
+            );
+            return navigate("/");
+          }
+          console.log(postResponse);
+        }
       } catch (error) {
         return {
           statuscode: -1,
@@ -92,6 +112,7 @@ const Register = () => {
               {/* <pre>{JSON.stringify(formdata, undefined, 2)}</pre> */}
               <form
                 className="form-horizontal"
+                onSubmit={register}
                 // action="https://mannatthemes.com/zoogler/horizontal/index.html"
               >
                 <div className="form-group row">
@@ -103,8 +124,11 @@ const Register = () => {
                       placeholder="Name"
                       name="name"
                       onChange={inputHandler}
-                      // value={formdata.name}
+                      // value={formdata.Name}
                     />
+                    {error.includes("name") && (
+                      <span className="text-danger">*Your name is invalid</span>
+                    )}
                   </div>
                 </div>
                 <div className="form-group row">
@@ -116,8 +140,13 @@ const Register = () => {
                       placeholder="Mobile Number"
                       onChange={inputHandler}
                       name="mobileNumber"
-                      // value={formdata.mobileNumber}
+                      value={formdata.mobileNumber}
                     />
+                    {error.includes("mobileNumber") && (
+                      <span className="text-danger">
+                        *Your Mobile is invalid
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="form-group row">
@@ -129,8 +158,11 @@ const Register = () => {
                       placeholder="Email"
                       onChange={inputHandler}
                       name="email"
-                      // value={formdata.email}
+                      value={formdata.email}
                     />
+                    {error.includes("email") && (
+                      <span className="text-danger">Your email is invalid</span>
+                    )}
                   </div>
                 </div>
                 <div className="form-group row">
@@ -142,7 +174,7 @@ const Register = () => {
                       placeholder="Address"
                       onChange={inputHandler}
                       name="address"
-                      // value={formdata.address}
+                      value={formdata.address}
                     />
                   </div>
                 </div>
@@ -156,9 +188,10 @@ const Register = () => {
                       onChange={inputHandler}
                       name="pincode"
                       maxLength={6}
-                      // value={formdata.pincode}
+                      value={formdata.pincode}
                     />
                   </div>
+                  {error.includes("pincode") && <p>Your pincode is invalid</p>}
                 </div>
                 <div className="form-group row">
                   <div className="col-12">
@@ -186,7 +219,6 @@ const Register = () => {
                     <button
                       className="btn btn-primary btn-block waves-effect waves-light"
                       type="submit"
-                      onClick={register}
                     >
                       Register
                     </button>

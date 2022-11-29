@@ -9,6 +9,7 @@ export const DATACONSTANT = {
 
   REGISTER_URL: "/ApiUserAfterLogin/SignupForAPI",
   IP_URL: "/ApiUserAfterLogin/SaveIPAddress",
+  GETTOKEN: "/ApiUserAfterLogin/ChangeApiUserToken",
 
   Version: "1.0",
   APPID: "ROUNDPAYAPPID13APR20191351",

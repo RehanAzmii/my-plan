@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { postRequest } from "../service/API_service";
 import { setCookie } from "../liberary/Cookies (1)";
 import { DATACONSTANT } from "../constant/data.constant";
+import { validEmail, validPassword } from "./regex";
 
 import { toast } from "react-toastify";
 
@@ -11,20 +12,18 @@ const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState();
   const [check, setCheck] = useState(false);
+  const [error, setError] = useState(false);
 
-  async function getSession(e) {
+  async function getToken(e) {
     e.preventDefault();
-    toast.success("Hi ");
-
-    if (check === true) {
+    if (check == true) {
       try {
         var postResponse = await postRequest(DATACONSTANT.LOGIN_URL, {
           domain: DATACONSTANT.DOMAIN_NAME,
-          userID: formData.email,
+          userID: formData.userID,
           Password: formData.password,
         });
-
-        if (postResponse.statuscode == 1) {
+        if (postResponse?.statuscode === 1) {
           setCookie(
             DATACONSTANT.SETCOOKIE,
             JSON.stringify(postResponse.data),
@@ -32,20 +31,58 @@ const Login = () => {
           );
           return navigate("/");
         }
-        console.log(postResponse);
-        alert(postResponse.msg);
-        toast.success(postResponse.msg);
       } catch (error) {
-        alert(error.code);
         return {
           statuscode: -1,
           msg: error.code,
         };
       }
     } else {
-      alert("check box checked");
+      alert("checked required");
+    }
+    if (!validEmail.test(formData.email)) {
+      setError(true);
+    }
+    if (!validPassword.test(formData.Password)) {
+      setError(true);
     }
   }
+
+  // async function getSession(e) {
+  //   // toast.success("Hi ");
+
+  //   if (check == true) {
+  //     try {
+  //       e.preventDefault();
+  //       var postResponse = await postRequest(DATACONSTANT.LOGIN_URL, {
+  //         domain: DATACONSTANT.DOMAIN_NAME,
+  //         userID: formData.email,
+  //         Password: formData.password,
+  //       });
+
+  //       if (postResponse.statuscode == 1) {
+  //         setCookie(
+  //           DATACONSTANT.SETCOOKIE,
+  //           JSON.stringify(postResponse.data),
+  //           30
+  //         );
+  //         return navigate("/");
+  //       }
+  //       console.log(postResponse.data);
+  //       console.log(postResponse);
+  //       alert(postResponse.msg);
+  //       toast.success(postResponse.msg);
+  //     } catch (error) {
+  //       alert(error.code);
+  //       return {
+  //         statuscode: -1,
+  //         msg: error.code,
+  //       };
+  //     }
+  //   } else {
+  //     alert("check box checked");
+  //   }
+  // }
   const inputCheck = () => {
     setCheck(!check);
   };
@@ -64,7 +101,7 @@ const Login = () => {
               </a>
             </div>
             <div className="p-3">
-              <form className="form-horizontal m-t-20">
+              <form className="form-horizontal m-t-20" onSubmit={getToken}>
                 <div className="form-group row">
                   <div className="col-12">
                     <input
@@ -72,11 +109,12 @@ const Login = () => {
                       type="text"
                       required=""
                       placeholder="userID"
-                      name="email"
+                      name="userID"
                       onChange={inputHandler}
                       // value={data.email}
                     />
                   </div>
+                  {error && <p>Your email is invalid</p>}
                 </div>
                 <div className="form-group row">
                   <div className="col-12">
@@ -90,6 +128,7 @@ const Login = () => {
                       // value={data.password}
                     />
                   </div>
+                  {error && <p>Your password is invalid</p>}
                 </div>
                 <div className="form-group row">
                   <div className="col-12">
@@ -99,7 +138,7 @@ const Login = () => {
                         className="custom-control-input"
                         id="customCheck1"
                         onClick={inputCheck}
-                        value={check}
+                        // value={check}s
                       />{" "}
                       <label
                         className="custom-control-label"
@@ -115,7 +154,6 @@ const Login = () => {
                     <button
                       className="btn btn-danger btn-block waves-effect waves-light"
                       type="submit"
-                      onClick={getSession}
                     >
                       Login
                     </button>
@@ -123,16 +161,16 @@ const Login = () => {
                 </div>
                 <div className="form-group m-t-10 mb-0 row">
                   <div className="col-sm-7 m-t-20">
-                    <Link to="/password" className="text-muted">
+                    <NavLink to="/password" className="text-muted">
                       <i className="mdi mdi-lock"></i>{" "}
                       <small>Forgot your password ?</small>
-                    </Link>
+                    </NavLink>
                   </div>
                   <div className="col-sm-5 m-t-20">
-                    <Link to="/register" className="text-muted">
+                    <NavLink to="/register" className="text-muted">
                       <i className="mdi mdi-account-circle"></i>{" "}
                       <small>Create an account ?</small>
-                    </Link>
+                    </NavLink>
                   </div>
                 </div>
               </form>

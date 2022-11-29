@@ -2,10 +2,24 @@ import React from "react";
 import { useState } from "react";
 import delete_cookie from "../liberary/Cookies (1)";
 import { DATACONSTANT } from "../constant/data.constant";
+import { getCookie } from "../liberary/Cookies (1)";
 
 import { useNavigate } from "react-router-dom";
+import { parse } from "cookie";
 
 const RightBar = () => {
+  let __Cookie = getCookie(DATACONSTANT.SETCOOKIE);
+  let get = {};
+  try {
+    get = JSON.parse(__Cookie);
+  } catch {
+    get = {
+      emailID: "",
+      name: "",
+      UserID: "",
+    };
+  }
+
   const navigate = useNavigate();
   const [show, setShow] = useState();
 
@@ -29,7 +43,6 @@ const RightBar = () => {
     }
   };
   checkCondition();
-  console.log(msg);
   return (
     <>
       <div>
@@ -105,15 +118,15 @@ const RightBar = () => {
                   </div>
                   <a className="dropdown-item" href="#">
                     <i className="mdi mdi-account-circle m-r-5 text-muted"></i>
-                    User ID : 1234
+                    UserID:{get.UserID}
                   </a>
                   <a className="dropdown-item" href="#">
                     <i className="mdi mdi-wallet m-r-5 text-muted"></i> Name :
-                    Test
+                    {get.name}
                   </a>
                   <a className="dropdown-item" href="#">
                     <i className="mdi mdi-settings m-r-5 text-muted"></i>
-                    Email :<p>abc@domain.xyz</p>
+                    Email :<p>{get.emailID}</p>
                   </a>
                   <div class="row">
                     <div class="col text-center">

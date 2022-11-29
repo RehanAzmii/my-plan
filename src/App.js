@@ -1,23 +1,38 @@
-import logo from "./logo.svg";
 import "./App.css";
-
+import React, { useState, useEffect } from "react";
 import Login from "./component/form/Login";
 import Register from "./component/form/Register";
 import ForgotPassword from "./component/form/ForgotPassword";
 import { ToastContainer } from "react-toastify";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { DATACONSTANT } from "./component/constant/data.constant";
 import { getCookie } from "./component/liberary/Cookies (1)";
+
 import Index from "./component/pages/Index";
 import Iplist from "./component/pages/Iplist";
 
 function App() {
-  const isCookies = getCookie(DATACONSTANT.SETCOOKIE);
-  console.log(isCookies);
+  const navigate = useNavigate();
+  const [page, setPage] = useState(true);
+
+  const x = getCookie(DATACONSTANT.SETCOOKIE);
+  useEffect(() => {
+    window.addEventListener("beforeunload", (e) => {
+      e.preventDefault();
+    });
+
+    if (!getCookie(DATACONSTANT.SETCOOKIE)) {
+      setPage(false);
+      return navigate("/");
+    } else {
+      setPage(true);
+      return navigate("/");
+    }
+  }, [page, x]);
+
   return (
     <div>
-      <ToastContainer />
-      {!isCookies ? (
+      {!page ? (
         <>
           {/* <Navbar /> */}
           <Routes>
